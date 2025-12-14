@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  
+  frontend:
+    image: node:20-alpine
+    container_name: react-frontend
+    working_dir: /app
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+
+  
+  backend:
+    build: ./api
+    container_name: python-backend
+    volumes:
+      - ./api:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_DEBUG=1
+      - DATABASE_URL=postgresql://nico:mipassword@db:5432/mi_base_de_datos
+    depends_on:
+      - db
+
+
+  db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=nico
+      - POSTGRES_PASSWORD=mipassword
+      - POSTGRES_DB=mi_base_de_datos
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+ 
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
