@@ -1,4 +1,6 @@
 flask
 flask-cors
 flask-sqlalchemy
-psycopg2-binary  
+psycopg2-binary 
+Flask-Bcrypt
+Flask-JWT-Extended
